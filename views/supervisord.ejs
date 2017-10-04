@@ -6,10 +6,16 @@
 
                 <article>
                     <h2>All Hosts</h2>
-                    <button type="button" id="refresh-toggle" class="btn btn-labeled btn-success active pull-right" style="margin-top: -50px;">
-                        <span class="btn-label"><i class="glyphicon glyphicon-refresh"></i></span>
-                        <span class="btn-text">Refresh on</span>
-                    </button>
+                    <div class="pull-right" style="margin-top: -50px;">
+                        <button type="button" id="refresh-toggle" class="btn btn-labeled btn-info active">
+                            <span class="btn-label"><i class="glyphicon glyphicon-refresh"></i></span>
+                            <span class="btn-text">Refresh on</span>
+                        </button>
+                        <button type="button" id="collapse-all" class="btn btn-labeled btn-success active">
+                            <span class="btn-label"><i class="glyphicon glyphicon-collapse-down"></i></span>
+                            <span class="btn-text">Toggle All</span>
+                        </button>
+                    </div>
                     <hr>
                     <div id="hosts-listing">
                     </div>
@@ -28,6 +34,22 @@
             }
         %>
         var uiRole = '<%= sessRole %>';
+
+        $('#collapse-all').click(function(e) {
+            if ($(this).find('i').hasClass('glyphicon-collapse-up')) {
+                $(this).find('i').removeClass('glyphicon-collapse-up').addClass('glyphicon-collapse-down');
+                $('table').toggle(false);
+                for (i in hostTablesCollapse) {
+                    hostTablesCollapse[i] = 'down';
+                }
+            } else {
+                $(this).find('i').removeClass('glyphicon-collapse-down').addClass('glyphicon-collapse-up');
+                $('table').toggle(true);
+                for (i in hostTablesCollapse) {
+                    hostTablesCollapse[i] = 'up';
+                }
+            }
+        })
 
         function updateList() {
             if (refresh == true) {
