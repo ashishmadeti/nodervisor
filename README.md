@@ -16,6 +16,9 @@ A Supervisord manager in node.js. Nodervisor provides a real-time web dashboard 
         npm install
 
   2. Update the config.js file with your database connection details.
+  3. If you face any issues with sqlite3 node module, run:
+        
+	npm install sqlite3 --build-from-source
 
 ### How to use it
 
@@ -28,10 +31,8 @@ A Supervisord manager in node.js. Nodervisor provides a real-time web dashboard 
     http://localhost:3000
 
   3. Log in using the default credentials of:
-  	<ul>
-  		<li>Email: admin@nodervisor</li>
-  		<li>Password: admin</li>
-	</ul>
+  		* Email: admin@nodervisor
+  		* Password: admin
 
   4. Navigate to the users page using the top menu. Change the admin credentials or add a new user and remove them.
 
