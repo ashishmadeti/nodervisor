@@ -85,6 +85,12 @@
             var updateInterval = setInterval('updateList()', 5000);
 
             $('#hosts-listing').on('click', '.super-action', function(){
+                if (action === 'restartAll'){
+                    if (!confirm('Do you really want to restart all processes on host ' + host)){
+                        return
+                    }
+                }
+                
                 var action = $(this).attr('data-action');
                 var process = $(this).attr('data-process');
                 var host = $(this).attr('data-host');
