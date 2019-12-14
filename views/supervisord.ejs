@@ -25,7 +25,7 @@
                     <div class="article-header">
                         <span id="search-error"></span>
                         <br>
-                        <input id="search" type="text" name="process_search" placeholder="Search">
+                        <input id="search" type="text" name="process_search" placeholder="Search (Ctrl + K)">
                     </div>
                     <div class="pull-right">
                         <button type="button" id="refresh-toggle" class="btn btn-labeled btn-info active">
@@ -195,6 +195,22 @@
             searchInProcessNames();
 
             $('#search').on('change', searchInProcessNames);
+
+            $(document).keydown(function(e) {
+                // `Ctrl + K` focuses search
+                if (e.ctrlKey && e.key === 'k') {
+                    e.preventDefault();
+                    $('#search').focus();
+                }
+                // `Ctrl + Alt + U` collapses all results
+                if (e.ctrlKey && e.altKey && e.key === 'u') {
+                    collapseUp();
+                }
+                // `Ctrl + Alt + D` Shows all results (un-collapse)
+                if (e.ctrlKey && e.altKey && e.key === 'd') {
+                    collapseDown();
+                }
+            });
         });
     </script>
 <%= include footer.ejs %>
