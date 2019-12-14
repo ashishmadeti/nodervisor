@@ -1,12 +1,33 @@
 <%= include header.ejs %>
     <%= include menu.ejs %>
+    <style media="screen">
+        .article-header {
+            display: inline;
+        }
+        h2.article-header {
+            margin-right: 25px;
+        }
+        #search {
+            line-height: 35px;
+            width: 55vh;
+        }
+        #search-error {
+            color: #dc2b2bf0;
+            font-size: 0.75rem;
+        }
+    </style>
     <div class="container">
         <div class="main-container">
             <div class="main clearfix">
 
                 <article>
-                    <h2>All Hosts</h2>
-                    <div class="pull-right" style="margin-top: -50px;">
+                    <h2 class="article-header">All Hosts</h2><br>
+                    <div class="article-header">
+                        <span id="search-error"></span>
+                        <br>
+                        <input id="search" type="text" name="process_search" placeholder="Search">
+                    </div>
+                    <div class="pull-right">
                         <button type="button" id="refresh-toggle" class="btn btn-labeled btn-info active">
                             <span class="btn-label"><i class="glyphicon glyphicon-refresh"></i></span>
                             <span class="btn-text">Refresh on</span>
@@ -35,21 +56,52 @@
         %>
         var uiRole = '<%= sessRole %>';
 
+        function collapseUp() {  // Just show host names and summary number
+            $('#collapse-all').find('i').removeClass('glyphicon-collapse-up').addClass('glyphicon-collapse-down');
+            $('table').toggle(false);
+            for (i in hostTablesCollapse) {
+                hostTablesCollapse[i] = 'down';
+            }
+        }
+        function collapseDown() {  // Show all processes
+            $('#collapse-all').find('i').removeClass('glyphicon-collapse-down').addClass('glyphicon-collapse-up');
+            $('table').toggle(true);
+            for (i in hostTablesCollapse) {
+                hostTablesCollapse[i] = 'up';
+            }
+        }
+
         $('#collapse-all').click(function(e) {
             if ($(this).find('i').hasClass('glyphicon-collapse-up')) {
-                $(this).find('i').removeClass('glyphicon-collapse-up').addClass('glyphicon-collapse-down');
-                $('table').toggle(false);
-                for (i in hostTablesCollapse) {
-                    hostTablesCollapse[i] = 'down';
-                }
+                collapseUp();
             } else {
-                $(this).find('i').removeClass('glyphicon-collapse-down').addClass('glyphicon-collapse-up');
-                $('table').toggle(true);
-                for (i in hostTablesCollapse) {
-                    hostTablesCollapse[i] = 'up';
-                }
+                collapseDown();
             }
         })
+
+        function searchInProcessNames() {
+            var searchText = $('#search').val().trim();
+            if (!searchText) {
+                searchText = '.*';  // In absence of any search text, show all
+            } else {
+                collapseDown();  // In case of non-empty search, don't collapse results
+            }
+            $('#search-error').html('');
+            try {
+                var searchRegex = new RegExp(searchText, 'i');
+            } catch {
+                $('#search-error').html('Invalid Regex');
+                return;
+            }
+            $('.process-row').each(function() {
+                var tdText = $(this).find('td')[0].innerText;
+                if (tdText.match(searchRegex)) {
+                    $(this).show();
+                } else {
+                    $(this).hide();
+                }
+            });
+        }
 
         function updateList() {
             if (refresh == true) {
@@ -75,6 +127,7 @@
                                 $('#hosts-listing').append(new EJS({url: '/partials/hosts-listing.ejs'}).render({host: hosts[key].host, processes: hosts[key].data, hostCollapsed: hostTablesCollapse[key], role: uiRole}));
                             }
                         });
+                        searchInProcessNames();
                     }
                 });
             }
@@ -137,6 +190,11 @@
                     refreshOn();
                 }
             });
+
+            $('#search').focus();
+            searchInProcessNames();
+
+            $('#search').on('change', searchInProcessNames);
         });
     </script>
 <%= include footer.ejs %>
